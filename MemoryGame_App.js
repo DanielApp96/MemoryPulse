@@ -57,7 +57,7 @@ const FREE_MODES = [
 const PREMIUM_MODES = [
   { id: 'grid4',   label: '4×4 Grid',   emoji: '🟦', desc: 'Bigger matrix challenge' },
   { id: 'shapes',  label: 'Shapes',     emoji: '🔷', desc: 'Remember geometric shapes' },
-  { id: 'lshapes', label: 'L-Shapes',   emoji: '⌐',  desc: 'Remember rotated corners' },
+  { id: 'lshapes', label: 'L-Shapes',   emoji: '⌐',  desc: 'Remember rotated corners', customEmoji: true },
 ];
 
 // ─── SHAPE COMPONENTS ────────────────────────────────────
@@ -274,7 +274,10 @@ function MenuScreen({ bests, isPremium, onSelect, onSub }) {
 
       {PREMIUM_MODES.map(m => (
         <TouchableOpacity key={m.id} style={[st.modeCard, st.modeCardPremium]} onPress={() => onSelect(m.id)} activeOpacity={0.8}>
-          <Text style={st.modeEmoji}>{m.emoji}</Text>
+          {m.id === 'lshapes'
+            ? <View style={{ width:28, height:28, justifyContent:'center', alignItems:'center' }}><LShape size={24} color={C.gold} rotate={0} /></View>
+            : <Text style={st.modeEmoji}>{m.emoji}</Text>
+          }
           <View style={{ flex: 1 }}>
             <Text style={[st.modeLabel, { color: C.gold }]}>{m.label}</Text>
             <Text style={st.modeDesc}>{m.desc}</Text>
@@ -370,7 +373,7 @@ function GameScreen({ mode, best, isPremium, onEnd, onBack }) {
   const indLabel = feedback === 'wrong' ? '✗ Wrong!' : feedback === 'correct' ? '✓ Perfect!' : isInput ? '👆 YOUR TURN' : '👀 WATCH';
 
   return (
-    <View style={st.gameBg}>
+    <SafeAreaView style={[st.gameBg, { flex:1 }]}>
       <View style={st.gameHeader}>
         <TouchableOpacity onPress={onBack} hitSlop={{ top:10,bottom:10,left:10,right:10 }}>
           <Text style={st.backBtn}>← Back</Text>
@@ -403,7 +406,7 @@ function GameScreen({ mode, best, isPremium, onEnd, onBack }) {
           ]} />
         ))}
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -476,9 +479,8 @@ function ShapesBoard({ active, onPress, disabled, feedback }) {
     <View style={{ alignItems:'center', gap:16 }}>
       <View style={[st.displayBox, { height:100 }, active!==null && { borderColor:C.purple }]}>
         {active !== null ? (
-          <View style={{ alignItems:'center', justifyContent:'center', flex:1, gap:6 }}>
+          <View style={{ alignItems:'center', justifyContent:'center', flex:1 }}>
             {SHAPES[active].draw(50, C.purple)}
-            <Text style={{ color:C.muted, fontSize:11 }}>{SHAPES[active].name}</Text>
           </View>
         ) : <Text style={{ color:C.muted, fontSize:22 }}>?</Text>}
       </View>
@@ -504,9 +506,8 @@ function LShapesBoard({ active, onPress, disabled, feedback }) {
     <View style={{ alignItems:'center', gap:16 }}>
       <View style={[st.displayBox, { height:100 }, active!==null && { borderColor:C.blue }]}>
         {active !== null ? (
-          <View style={{ alignItems:'center', justifyContent:'center', flex:1, gap:6 }}>
+          <View style={{ alignItems:'center', justifyContent:'center', flex:1 }}>
             <LShape size={50} color={C.blue} rotate={LSHAPES[active].rotate} />
-            <Text style={{ color:C.muted, fontSize:11 }}>{LSHAPES[active].name}</Text>
           </View>
         ) : <Text style={{ color:C.muted, fontSize:22 }}>?</Text>}
       </View>
@@ -577,7 +578,7 @@ const st = StyleSheet.create({
   startBtn: { backgroundColor:C.accent, paddingHorizontal:40, paddingVertical:15, borderRadius:30 },
   startBtnTxt: { fontSize:18, fontWeight:'800', color:'#fff' },
   gameBg: { flex:1, backgroundColor:C.bg },
-  gameHeader: { flexDirection:'row', justifyContent:'space-between', alignItems:'center', paddingHorizontal:20, paddingTop:10, paddingBottom:6 },
+  gameHeader: { flexDirection:'row', justifyContent:'space-between', alignItems:'center', paddingHorizontal:20, paddingTop:23, paddingBottom:4 },
   backBtn: { fontSize:14, color:C.muted, fontWeight:'600' },
   levelTxt: { fontSize:20, fontWeight:'800', color:C.white },
   seqLen: { fontSize:11, color:C.muted },
